@@ -62,8 +62,7 @@ export default function CollectionView({ collection, books, loading, add, update
   }, [books, search, statusFilter, genreFilter, sortBy, showR18])
 
   const handleCardTap = (book) => {
-    if (book.rss_feed_url) setRssBook(book)
-    else setModal({ book })
+    setModal({ book })
   }
 
   const handleSave = async (data) => {
@@ -177,7 +176,8 @@ export default function CollectionView({ collection, books, loading, add, update
       {modal && (
         <div style={{ position: 'fixed', inset: 0, zIndex: 40 }}>
           <BookModal book={modal.isNew ? null : modal.book} collection={collection}
-            onClose={() => setModal(null)} onSave={handleSave} onDelete={remove} allBooks={allBooks} />
+            onClose={() => setModal(null)} onSave={handleSave} onDelete={remove} allBooks={allBooks}
+            onOpenRss={(book) => setRssBook(book)} />
         </div>
       )}
       {rssBook && (

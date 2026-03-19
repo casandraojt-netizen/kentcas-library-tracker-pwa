@@ -5,7 +5,7 @@ const GENRES_PHYSICAL = ['Fantasy','Science Fiction','Mystery','Thriller','Roman
 const GENRES_WEB = ['Xianxia','Wuxia','Cultivation','LitRPG','Progression Fantasy','Isekai','Reincarnation','System','Dungeon','Slice of Life','Romance','Action','Adventure','Sci-Fi','Fantasy','Horror','Comedy','Manhwa','Manga','Web Novel','Other']
 const TAG_SUGGESTIONS = ['SI','Self-Insert','OC','Gamer','System','Cultivation','Xianxia','LitRPG','Isekai','Reincarnation','Progression','Dark','Comedy','Wholesome','Romance','Completed','Ongoing','Crossover','AU']
 
-export default function BookModal({ book, collection, onClose, onSave, onDelete, allBooks = [] }) {
+export default function BookModal({ book, collection, onClose, onSave, onDelete, onOpenRss, allBooks = [] }) {
   const isNew = !book?.id
   const [form, setForm] = useState({
     title: '', author: '', cover_url: '', genre: '', status: 'unread',
@@ -82,10 +82,18 @@ export default function BookModal({ book, collection, onClose, onSave, onDelete,
       <div style={{ flexShrink: 0, display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '12px 16px', paddingTop: 'max(16px, env(safe-area-inset-top))', borderBottom: '1px solid var(--border)', background: 'var(--bg-surface)' }}>
         <button onClick={onClose} style={{ color: 'var(--text-muted)', background: 'none', border: 'none', cursor: 'pointer', fontSize: '22px', lineHeight: 1 }}>✕</button>
         <h2 style={{ fontSize: '17px', fontWeight: '600', color: 'var(--text-primary)', margin: 0 }}>{isNew ? 'Add Book' : 'Edit Book'}</h2>
-        <button onClick={handleSave} disabled={!form.title.trim() || saving}
-          style={{ color: !form.title.trim() || saving ? 'var(--text-muted)' : 'var(--accent)', fontSize: '16px', fontWeight: '600', background: 'none', border: 'none', cursor: 'pointer' }}>
-          {saving ? '...' : 'Save'}
-        </button>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+          {!isNew && form.rss_feed_url && onOpenRss && (
+            <button onClick={() => { onClose(); onOpenRss(book) }}
+              style={{ color: 'var(--accent)', background: 'none', border: 'none', cursor: 'pointer', fontSize: '18px', lineHeight: 1 }} title="Open RSS Feed">
+              📡
+            </button>
+          )}
+          <button onClick={handleSave} disabled={!form.title.trim() || saving}
+            style={{ color: !form.title.trim() || saving ? 'var(--text-muted)' : 'var(--accent)', fontSize: '16px', fontWeight: '600', background: 'none', border: 'none', cursor: 'pointer' }}>
+            {saving ? '...' : 'Save'}
+          </button>
+        </div>
       </div>
 
       {/* Duplicate warning */}

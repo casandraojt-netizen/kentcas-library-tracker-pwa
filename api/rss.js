@@ -1,4 +1,3 @@
-// Vercel serverless function for RSS fetching — uses fetch (available in Node 18+)
 module.exports = async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Origin', '*')
   res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS')
@@ -13,12 +12,19 @@ module.exports = async function handler(req, res) {
     const url = feedUrl + (feedUrl.includes('?') ? '&' : '?') + '_t=' + Date.now()
     const response = await fetch(url, {
       headers: {
-        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
-        'Accept': 'application/rss+xml, application/xml, text/xml, */*',
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36',
+        'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
+        'Accept-Language': 'en-US,en;q=0.9',
+        'Accept-Encoding': 'gzip, deflate, br',
         'Cache-Control': 'no-cache',
+        'Pragma': 'no-cache',
+        'Sec-Fetch-Dest': 'document',
+        'Sec-Fetch-Mode': 'navigate',
+        'Sec-Fetch-Site': 'none',
+        'Upgrade-Insecure-Requests': '1',
       },
       redirect: 'follow',
-      signal: AbortSignal.timeout(10000),
+      signal: AbortSignal.timeout(12000),
     })
 
     if (!response.ok) {
@@ -26,16 +32,13 @@ module.exports = async function handler(req, res) {
     }
 
     const body = await response.text()
-
     if (!body || body.trim().length === 0) {
       return res.status(200).json({ success: false, error: 'Feed returned no content', items: [] })
     }
-
     if (body.trimStart().startsWith('<!DOCTYPE') || body.trimStart().startsWith('<html')) {
-      return res.status(200).json({ success: false, error: 'Server returned HTML instead of RSS — may be rate-limited', items: [] })
+      return res.status(200).json({ success: false, error: 'Server returned HTML — may be rate-limited', items: [] })
     }
 
-    // Parse RSS items with regex — no dependencies needed
     const items = []
     const itemRegex = /<item>([\s\S]*?)<\/item>/gi
     let match
@@ -47,7 +50,6 @@ module.exports = async function handler(req, res) {
         return m ? (m[1] || '').trim() : ''
       }
       const getLinkTag = () => {
-        // <link> in RSS is tricky — it can be plain text between tags or an href attribute
         const m1 = block.match(/<link>([^<]+)<\/link>/i)
         if (m1) return m1[1].trim()
         const m2 = block.match(/<link[^>]+href=["']([^"']+)["']/i)

@@ -23,11 +23,4 @@ export default defineConfig({
       },
     })
   ],
-  // Exclude api folder from Vite build — Vercel handles it separately
-  build: {
-    outDir: 'dist',
-    rollupOptions: {
-      external: [],
-    }
-  }
 })

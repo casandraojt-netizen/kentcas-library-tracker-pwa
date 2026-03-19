@@ -15,14 +15,6 @@ export const WEB_STATUSES = [
   { value: 'hiatus', label: 'Hiatus', color: '#7a6a3a' },
 ]
 
-export const PHYSICAL_GENRES = ['Fantasy','Science Fiction','Mystery','Thriller','Romance','Historical Fiction','Literary Fiction','Horror','Adventure','Non-Fiction','Biography','Self-Help','Science','Philosophy','Poetry','Graphic Novel','Manga','Other']
-
-export const WEB_GENRES = ['Xianxia','Wuxia','Cultivation','LitRPG','Progression Fantasy','Isekai','Reincarnation','System','Dungeon','Slice of Life','Romance','Action','Adventure','Sci-Fi','Fantasy','Horror','Comedy','Manhwa','Manga','Web Novel','Other']
-
 export function getStatuses(collection) {
   return collection === 'physical' ? PHYSICAL_STATUSES : WEB_STATUSES
-}
-
-export function getGenres(collection) {
-  return collection === 'physical' ? PHYSICAL_GENRES : WEB_GENRES
 }
